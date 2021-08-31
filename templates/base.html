@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>{% block title %}Курс валют ЦБР{% endblock %}</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+    {% block stylesheets %}
+        {#{{ encore_entry_link_tags('app') }}#}
+    {% endblock %}
+
+    {% block javascripts %}
+        {#{{ encore_entry_script_tags('app') }}#}
+    {% endblock %}
+</head>
+<body>
+<main class="container">
+    <div class="bg-light p-5 rounded">
+        {% block form %}
+            <form>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><a href="{% url 'index' %}" class="text-decoration-none">&#8381; &#36; &#8364;</a></span>
+                    {% block formselector %}
+                        <select class="form-select" id="inputGroupSelect02" name="id">
+                            <option value="0" selected>Все валюты</option>
+                            {% for item in currencies %}
+                                <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endblock %}
+                    <span class="input-group-text" id="basic-addon1">Начальная дата</span>
+                    <input type="date" value="{{ start_date }}" name="from" class="form-control">
+                    <span class="input-group-text" id="basic-addon1">Конечная дата</span>
+                    <input type="date" value="{{ end_date }}" name="to" class="form-control">
+                    {% if reverse == true %}
+                        <input type="radio" name="order" value="desc" class="btn-check" id="option1" autocomplete="off" checked>
+                        <label class="btn btn-outline-secondary" for="option1">&#9660;</label>
+                        <input type="radio" name="order" value="asc" class="btn-check" id="option2" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="option2">&#9650;</label>
+                    {% else %}
+                        <input type="radio" name="order" value="desc" class="btn-check" id="option1" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="option1">&#9660;</label>
+                        <input type="radio" name="order" value="asc" class="btn-check" id="option2" autocomplete="off" checked>
+                        <label class="btn btn-outline-secondary" for="option2">&#9650;</label>
+                    {% endif %}
+                    {% block formbutton %}
+                        <button formaction="#" class="btn btn-outline-secondary" type="submit" id="button-addon2">Показать</button>
+                        <button formaction="/json" class="btn btn-outline-secondary" type="submit" name="export" value="json" id="button-addon2">JSON</button>
+                    {% endblock %}
+                    <button formaction="{% url 'currencies' %}update/" class="btn btn-outline-secondary" type="submit" id="button-addon2">Импорт</button>
+                </div>
+            </form>
+        {% endblock %}
+        {% block body %}{% endblock %}
+        {% block pagination %}
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page=1">&laquo;</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Назад</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Назад</a>
+                    </li>
+                {% endif %}
+
+                {% if page_obj.number|add:'-4' > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.number|add:'-5' }}">&hellip;</a>
+                    </li>
+                {% endif %}
+
+                {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">
+                            <span class="sr-only">Страница {{ i }} из {{ page_obj.paginator.num_pages }}</span>
+                        </span>
+                    </li>
+                {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.number|add:'5' }}">&hellip;</a>
+                    </li>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">Вперед</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Вперед</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+                    </li>
+                {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        {% endblock %}
+    </div>
+</main>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

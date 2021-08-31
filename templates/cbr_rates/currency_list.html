@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Курс валют ЦБР{% endblock %}
+
+{% block body %}
+    <h1>Currency List</h1>
+
+    {% if currency_list %}
+    <ul>
+
+      {% for currency in currency_list %}
+      <li>
+        <a href="{{ currency.get_absolute_url }}">{{ currency.name }}</a> ({{ currency.id_currency }})
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no currencies in DB.</p>
+    {% endif %} 
+{% endblock %}

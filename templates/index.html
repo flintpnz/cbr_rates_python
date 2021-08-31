@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Курс валют ЦБР{% endblock %}
+
+{% block body %}
+
+    <h2>Курс всех валют</h2>
+    <div class="d-flex justify-content-center">
+        <ul>
+            <li>Количество валют: <a href="{% url 'currencies' %}">{{ num_currencies }}</a></li>
+            <li>Количество крсов валют: <a href="{% url 'rates' %}">{{ num_rates }}</a></li>
+        </ul>
+    </div>
+
+{% endblock %}

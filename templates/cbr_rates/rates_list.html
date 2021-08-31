@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Курс валют ЦБР{% endblock %}
+
+{% block body %}
+    {% if rates_list %}
+        <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th scope="col">Валюта</th>
+                <th scope="col">Номинал</th>
+                <th scope="col">Курс</th>
+                <th scope="col"><a href="?id=()&order=desc" class="text-decoration-none">&#9660;</a> Дата <a href="?id=()&order=asc" class="text-decoration-none">&#9650;</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rate in rates_list %}
+                <tr>
+                    <td><a href="{% url 'rate-list' rate.id_currency.id %}">{{ rate.id_currency.name }}</a></td>
+                    <td>{{ rate.nominal }}</td>
+                    <td>{{ rate.value }}</td>
+                    <td>{{ rate.date }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    {% else %}
+      <p>There are no currencies in DB.</p>
+    {% endif %} 
+{% endblock %}
